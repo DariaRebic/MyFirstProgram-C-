@@ -1,0 +1,8 @@
+Attack_on_Titan,Shonen,87,1,2020,5
+Rascal_Does_Not_Dream_Of_Bunny_Girl_Senpai,Shoujo,13,2,2020,5
+The_Rising_Of_The_Shield_Hero,Isekai,38,3,2021,3
+Fruits_Basket,Slice_Of_Life,63,4,2021,4
+The_Aikatsu!,Kodomo,50,5,2022,2
+The_Eden_Of_Grisaia,Harem,13,6,2022,2
+Yona_Of_The_Dawn,Reverse_Harem,24,7,2023,3
+Neon_Genesis_Evangelion,Mecha,26,8,2023,5

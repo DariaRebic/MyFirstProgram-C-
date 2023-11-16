@@ -1,0 +1,388 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using System.Linq;
+
+namespace ConsoleApp8
+{
+    class Program
+    {
+        static int Main()
+        {
+            string[] NamePoz = new string[8] { "Art Director", "Backgroud Designer", "Character Designer", "Model Maker", "Producer", "Marketing", "Voice actor", "Writer" };
+            string[] PayPoz = new string[8] { "$77.4.4K", " $60.1K", "$47.8K", " $55.9K", "$81.3K", " 69.9K", "$71.2K", "$85.5K" };
+            string fileName = @"C:\Users\rebic\source\repos\ConsoleApp1\ConsoleApp1\zaposlenici.txt";
+            string fileName2 = @"C:\Users\rebic\source\repos\ConsoleApp1\ConsoleApp1\anime.txt";
+            int odabir = 0;
+            List<Zaposlenici> worker = new List<Zaposlenici>();
+
+            worker = Read(fileName, worker);
+
+            List<Anime> anime = new List<Anime>();
+
+            anime = Read2(fileName2, anime);
+
+            while (true)
+            {
+                Console.Clear();
+                string line;
+                Console.BackgroundColor = ConsoleColor.DarkMagenta;
+                using (StreamReader sr = new StreamReader("welcome.txt"))
+                {
+                    while ((line = sr.ReadLine()) != null)
+                    {
+                        Console.WriteLine(line);
+                    }
+                }
+
+
+                Console.WriteLine("\n1. Ispis zaposlenika");
+                Console.WriteLine("\n2. Poslovi");
+                Console.WriteLine("\n3. Anime-i na kojima zaposlenici rade");
+                Console.WriteLine("\n4. Dodaj anime");
+                Console.WriteLine("\n5. Izbriši anime");
+                Console.WriteLine("\n6. Rokovi");
+                Console.WriteLine("\n7. Statistika godine");
+                Console.WriteLine("\n8. Anime sortiran po imenu");
+                Console.WriteLine("\n9. Dodaj zaposlenika");
+                Console.WriteLine("\n10. Izbriši zaposlenika");
+                Console.WriteLine("\n11. Save and exit");
+                Console.Write("\nSelect: ");
+
+                odabir = Convert.ToInt32(Console.ReadLine());
+
+                switch (odabir)
+                {
+                    case 1:
+                        Console.Clear();
+                        IspisZaposlenika(worker, NamePoz, PayPoz);
+                        Console.ReadKey();
+                        break;
+                    case 2:
+                        Console.Clear();
+                        Poslovi(worker);
+                        Console.ReadKey();
+                        break;
+                    case 3:
+                        Console.Clear();
+                        IspisAnimea(anime);
+                        Console.ReadKey();
+                        break;
+                    case 4:
+                        Console.Clear();
+                        anime = DodajAnime(anime);
+                        Console.ReadKey();
+                        break;
+                    case 5:
+                        Console.Clear();
+                        anime = IzbrisiAnime(anime);
+                        Console.ReadKey();
+                        break;
+                    case 6:
+                        Console.Clear();
+                        Rokovi(worker);
+                        Console.ReadKey();
+                        break;
+                    case 7:
+                        Console.Clear();
+                        Statistika_godine(anime);
+                        Console.ReadKey();
+                        break;
+                    case 8:
+                        Console.Clear();
+                        IspisAnimeaSortiranoPoImenu(anime);
+                        Console.ReadKey();
+                        break;
+                    case 9:
+                        Console.Clear();
+                        worker = DodajZaposlenika(worker);
+                        break;
+                    case 10:
+                        Console.Clear();
+                        worker = IzbrisiZaposlenika(worker);
+                        break;
+                    case 11:
+                        Console.Clear();
+                        Write(fileName, worker);
+                        return 0;
+                }
+            }
+        }
+
+        static List<Zaposlenici> Read(string fileName, List<Zaposlenici> worker)
+        {
+            using (StreamReader sr = File.OpenText(fileName))
+            {
+                string temp = "";
+                while ((temp = sr.ReadLine()) != null)
+                {
+                    string[] a = temp.Split(',');
+                    string ime = a[0];
+                    string prezime = a[1];
+                    string id = a[2];
+                    string idPosition = a[3];
+
+                    worker.Add(new Zaposlenici { ime = ime, prezime = prezime, id = id, idPosition = idPosition });
+                }
+            }
+
+            return worker;
+        }
+
+        static List<Anime> Read2(string fileName2, List<Anime> anime)
+        {
+            using (StreamReader sr = File.OpenText(fileName2))
+            {
+                string temp = "";
+                while ((temp = sr.ReadLine()) != null)
+                {
+                    string[] a = temp.Split(',');
+                    string ime = a[0];
+                    string vrsta = a[1];
+                    string brEp = a[2];
+                    string idPozicija = a[3];
+                    string godina = a[4];
+                    string ocjena = a[5];
+
+                    anime.Add(new Anime { ime = ime, vrsta = vrsta, brEp = brEp, idPozicija = idPozicija, godina = godina, ocjena = ocjena });
+                }
+            }
+
+            return anime;
+        }
+
+        static void Write(string fileName, List<Zaposlenici> worker)
+        {
+            using (StreamWriter sw = File.CreateText(fileName))
+            {
+                foreach (Zaposlenici w in worker)
+                {
+                    sw.WriteLine(w.ime + "," + w.prezime + "," + w.id + "," + w.idPosition);
+                }
+            }
+
+        }
+
+        static void Write2(string fileName2, List<Anime> anime)
+        {
+            using (StreamWriter sw = File.CreateText(fileName2))
+            {
+                foreach (Anime w in anime)
+                {
+                    sw.WriteLine(w.ime + "," + w.vrsta + "," + w.brEp + "," + w.idPozicija + "," + w.godina + "," + w.ocjena);
+                }
+            }
+
+        }
+
+        static void IspisZaposlenika(List<Zaposlenici> worker, string[] NamePoz, string[] PayPoz)
+        {
+            foreach (Zaposlenici w in worker)
+            {
+                int poz = Convert.ToInt32(w.idPosition);
+
+                Console.Write(" ID,Ime,Prezime,Titula,Plaća: {0} {1} {2} ", w.id, w.ime, w.prezime);
+
+                for (int i = 0; i < 8; i++)
+                {
+                    if ((poz - 1) == i)
+                    {
+                        Console.Write("{0} {1}", NamePoz[i], PayPoz[i]);
+                    }
+                }
+                Console.WriteLine();
+
+            }
+        }
+        static void IspisAnimea(List<Anime> anime)
+        {
+            foreach (Anime w in anime)
+            {
+                int poz = Convert.ToInt32(w.idPozicija);
+
+                Console.WriteLine("--------------------------------------------------------------------------------------------------------");
+                Console.Write(" ID,Ime,Vrsta,Broj epizoda,Godina,Ocjena: {0} {1} {2} {3} {4} {5} ", w.idPozicija, w.ime, w.vrsta, w.brEp, w.godina, w.ocjena);
+
+                Console.WriteLine();
+            }
+        }
+
+        static void IspisAnimeaSortiranoPoImenu(List<Anime> anime)
+        {
+            List<Anime> SortedList = anime.OrderBy(o => o.ime).ToList();
+
+            foreach (Anime w in SortedList)
+            {
+                int pozicija = Convert.ToInt32(w.idPozicija);
+
+                Console.WriteLine("--------------------------------------------------------------------------------------------------------");
+                Console.Write(" ID,Ime,Vrsta,BrEp,Godina,Ocjena: {0} {1} {2} {3} {4} {5} ", w.idPozicija, w.ime, w.vrsta, w.brEp, w.godina, w.ocjena);
+                Console.WriteLine();
+            }
+            Console.ReadKey();
+        }
+
+        static void Poslovi(List<Zaposlenici> worker)
+        {
+            Console.Write(" POSLOVI");
+            Console.Write("\n------------------\n");
+            Console.WriteLine("1 - Art Director");
+            Console.WriteLine("2 - Backgroud Designer");
+            Console.WriteLine("3 - Character Designer");
+            Console.WriteLine("4 - Model Maker");
+            Console.WriteLine("5 - Producer");
+            Console.WriteLine("6 - Marketing");
+            Console.WriteLine("7 - Voice actor");
+            Console.WriteLine("8 - Writer");
+        }
+
+        static void Rokovi(List<Zaposlenici> worker)
+        {
+            Console.Write(" ROKOVI");
+            Console.Write("\n------------------\n");
+            Console.WriteLine("Attack on Titan: 15.04.2023.");
+            Console.WriteLine("Rascal Does Not Dream of Bunny Girl Senpai: 23.04.2023.");
+            Console.WriteLine("The Rising Of The Shield Hero: 01.04.2023.");
+            Console.WriteLine("Fruits Basket: 13.04.2023.");
+            Console.WriteLine("The Aikatsu!: 17.04.2023.");
+            Console.WriteLine("The Eden of Grisaia: 05.04.2023.");
+            Console.WriteLine("Yona Of The Dawn: 09.04.2023.");
+            Console.WriteLine("Neon Genesis Evangelion: 27.04.2023.");
+        }
+
+        static void Statistika_godine(List<Anime> anime)
+        {
+            Console.Clear();
+            Console.Write(" STATISTIKA\n");
+            Console.Write("\nUpišite godinu: \n");
+            string unos = Console.ReadLine();
+
+            foreach (Anime w in anime)
+            {
+                if (unos == w.godina)
+                {
+                    Console.Write(" Godina,Ime,Vrsta,BrEp,ID,ocjena: {0} {1} {2} {3} {4} {5} ", w.godina, w.ime, w.vrsta, w.brEp, w.idPozicija, w.ocjena);
+
+                    Console.WriteLine();
+                }
+            }
+            Console.ReadLine();
+        }
+        static List<Zaposlenici> DodajZaposlenika(List<Zaposlenici> worker)
+        {
+            Console.Write("Unesite novog zaposlenika (ime,prezime,id,id_Position): ");
+
+            string temp = Console.ReadLine();
+            string[] a = temp.Split(',');
+            string ime = a[0];
+            string prezime = a[1];
+            string id = a[2];
+            string idPosition = a[3];
+
+            worker.Add(new Zaposlenici { ime = ime, prezime = prezime, id = id, idPosition = idPosition });
+
+            return worker;
+        }
+        static List<Anime> DodajAnime(List<Anime> anime)
+        {
+            Console.Write("Unesite novi anime (ime,vrsta,brEp,idPozicija,godina,ocjena): ");
+
+            string temp = Console.ReadLine();
+            string[] a = temp.Split(',');
+            string ime = a[0];
+            string vrsta = a[1];
+            string brEp = a[2];
+            string idPozicija = a[3];
+            string godina = a[4];
+            string ocjena = a[5];
+
+            anime.Add(new Anime { ime = ime, vrsta = vrsta, brEp = brEp, idPozicija = idPozicija, godina = godina, ocjena = ocjena });
+
+            return anime;
+        }
+
+        static List<Zaposlenici> IzbrisiZaposlenika(List<Zaposlenici> worker)
+        {
+            int i = 0;
+            int prov = 0;
+            Console.Clear();
+            foreach (Zaposlenici w in worker)
+            {
+                Console.WriteLine($"ID-{w.id} {w.ime} {w.prezime}");
+            }
+            Console.Write("Unesite ID radnika za izbrisati: ");
+            string idStr = Console.ReadLine();
+            foreach (Zaposlenici w in worker)
+            {
+                if (idStr == w.id)
+                {
+                    prov = 1;
+                    break;
+                }
+                i++;
+            }
+            if (prov == 1)
+            {
+                worker.RemoveAt(i);
+            }
+            else
+            {
+                Console.Clear();
+                Console.WriteLine("ERROR!");
+                Console.ReadKey();
+            }
+            return worker;
+        }
+        static List<Anime> IzbrisiAnime(List<Anime> anime)
+        {
+            int i = 0;
+            int prov = 0;
+            Console.Clear();
+            foreach (Anime w in anime)
+            {
+                Console.WriteLine($"ID-{w.idPozicija} {w.ime} {w.vrsta} {w.brEp} {w.godina} {w.ocjena}");
+            }
+            Console.Write("Unesite ID anime-a za izbrisati: ");
+            string idStr = Console.ReadLine();
+            foreach (Anime w in anime)
+            {
+                if (idStr == w.idPozicija)
+                {
+                    prov = 1;
+                    break;
+                }
+                i++;
+            }
+            if (prov == 1)
+            {
+                anime.RemoveAt(i);
+            }
+            else
+            {
+                Console.Clear();
+                Console.WriteLine("ERROR!");
+                Console.ReadKey();
+            }
+            return anime;
+        }
+
+        struct Zaposlenici
+        {
+            public string ime;
+            public string prezime;
+            public string id;
+            public string idPosition;
+        }
+
+        struct Anime
+        {
+            public string ime;
+            public string vrsta;
+            public string brEp;
+            public string idPozicija;
+            public string godina;
+            public string ocjena;
+        }
+    }
+}
